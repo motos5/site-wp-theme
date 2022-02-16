@@ -1,4 +1,80 @@
 <?php
+/* =================================================== */
+// Theme initialization
+if (! function_exists('site_test_setup')){
+	function site_test_setup() {
+		
+		load_theme_textdomain( 'site-test', get_template_directory() . '/languages' );
+		add_theme_support( 'automatic-feed-links' );
+		add_theme_support( 'title-tag' );
+		add_theme_support( 'post-thumbnails' );
+		set_post_thumbnail_size( 440, 280, true );
+
+
+		add_theme_support(
+			'html5',
+			array(
+				'search-form',
+				'comment-form',
+				'comment-list',
+				'gallery',
+				'caption',
+				'style',
+				'script',
+			)
+		);
+
+		add_theme_support(
+			'custom-background',
+			apply_filters(
+				'site_test_custom_background_args',
+				array(
+					'default-color' => 'ffffff',
+					'default-image' => '',
+				)
+			)
+		);
+
+		add_theme_support( 'customize-selective-refresh-widgets' );
+
+		add_theme_support(
+			'custom-logo',
+			array(
+				'height'      => 250,
+				'width'       => 250,
+				'flex-width'  => true,
+				'flex-height' => true,
+			)
+		);
+	}
+}
+add_action( 'after_setup_theme', 'site_test_setup' );
+
+
+// Including Styles and Scripts
+function site_test_scripts() {
+	wp_enqueue_style( 'main', get_stylesheet_uri() );
+	wp_enqueue_style( 'site-test-style', get_template_directory_uri() . '/assets/css/style.min.css', array());
+
+	wp_enqueue_script( 'site-test-sripts', get_template_directory_uri() . '/assets/js/main.min.js', array(), true );
+}
+add_action( 'wp_enqueue_scripts', 'site_test_scripts' );
+
+
+// Disable thumbnail creation
+add_filter( 'intermediate_image_sizes', 'delete_intermediate_image_sizes' );
+function delete_intermediate_image_sizes( $sizes ){
+	return array_diff( $sizes, [
+		'medium_large',
+		'large',
+		'1536x1536',
+		'2048x2048',
+	] );
+}
+/* =================================================== */
+
+
+
 /**
  * site test functions and definitions
  *
@@ -84,66 +160,3 @@ require get_template_directory() . '/inc/customizer.php';
 if ( defined( 'JETPACK__VERSION' ) ) {
 	require get_template_directory() . '/inc/jetpack.php';
 }
-
-/* =================================================== */
-// Инициализация темы
-function site_test_setup() {
-	
-	load_theme_textdomain( 'site-test', get_template_directory() . '/languages' );
-	add_theme_support( 'automatic-feed-links' );
-	add_theme_support( 'title-tag' );
-	add_theme_support( 'post-thumbnails' );
-
-	register_nav_menus(
-		array(
-			'menu-1' => esc_html__( 'Primary', 'site-test' ),
-		)
-	);
-
-	add_theme_support(
-		'html5',
-		array(
-			'search-form',
-			'comment-form',
-			'comment-list',
-			'gallery',
-			'caption',
-			'style',
-			'script',
-		)
-	);
-
-	add_theme_support(
-		'custom-background',
-		apply_filters(
-			'site_test_custom_background_args',
-			array(
-				'default-color' => 'ffffff',
-				'default-image' => '',
-			)
-		)
-	);
-
-	add_theme_support( 'customize-selective-refresh-widgets' );
-
-	add_theme_support(
-		'custom-logo',
-		array(
-			'height'      => 250,
-			'width'       => 250,
-			'flex-width'  => true,
-			'flex-height' => true,
-		)
-	);
-}
-add_action( 'after_setup_theme', 'site_test_setup' );
-
-
-// Подключение стилей и скриптов
-function site_test_scripts() {
-	wp_enqueue_style( 'main', get_stylesheet_uri() );
-	wp_enqueue_style( 'site-test-style', get_template_directory_uri() . '/assets/css/style.min.css', array());
-
-	wp_enqueue_script( 'site-test-sripts', get_template_directory_uri() . '/assets/js/main.min.js', array(), true );
-}
-add_action( 'wp_enqueue_scripts', 'site_test_scripts' );
